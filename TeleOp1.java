@@ -73,6 +73,11 @@ public class TeleOp1 extends LinearOpMode {
                     }
                 }.start();
             }
+            
+            //When "y" is pressed, launch the airplane.
+            if (gamepad1.y) {
+                robot.launchAirplane();
+            }
         }
     }
 }
