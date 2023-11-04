@@ -15,11 +15,13 @@ public class Robot9330 {
     public DcMotor motorDriveBackLeft; //Rear Left motor for wheel base.
     public DcMotor motorDriveBackRight; //Rear Right motor for wheel base.
     public OpMode opMode;
-    public Servo servoWheelie;
+    //public Servo servoWheelie;
     public boolean flip;
     public Servo airplaneLauncherRelease; //The servo that release the airplane on the launcher.
     boolean planeIsLaunched = false; //Switched to true when the plane is launched.
-    
+    public Servo pixelTrapServoOne; //First Servo for the pixel trap.
+    public Servo pixelTrapServoTwo; //Second Servo for the pixel trap.
+
     public Robot9330(OpMode opMode, boolean flip) {
         this.opMode = opMode;
         this.flip = flip;
@@ -28,8 +30,12 @@ public class Robot9330 {
         motorDriveFrontRight = opMode.hardwareMap.get(DcMotor.class, "motorDriveFrontRight");
         motorDriveBackLeft = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackLeft");
         motorDriveBackRight = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackRight");
-        servoWheelie = opMode.hardwareMap.get(Servo.class, "servoWheelie");
-        airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "AirplaneLauncher");
+        //servoWheelie = opMode.hardwareMap.get(Servo.class, "servoWheelie");
+        airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "servoDrone");
+        pixelTrapServoOne = opMode.hardwareMap.get(Servo.class, "pixelTrapServoOne");
+        pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo");
+        
+        airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band.
         
         //Set up IMU
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -83,8 +89,28 @@ public class Robot9330 {
     //Rotates a servo, releasing the paper airplane.
     public void launchAirplane() {
         if (planeIsLaunched == false) { //Servo can only be rotated once.
-            airplaneLauncherRelease.setPosition(-0.25);
+            airplaneLauncherRelease.setPosition(0.5); //NOTES: 0.64 to hold down band.
             planeIsLaunched = true;
         }
     }
+
+    //Moves the pixel trap up if down, and downif up.
+    public void togglePixelTrap() {
+        if (pixelTrapIsDown == false) {
+            pixelTrapServoOne.setPosition(1);
+            pixelTrapServoTwo.setPosition(1);
+            pixelTrapIsDown = true;
+        } else if (pixelTrapIsDown == true) {
+            pixelTrapServoOne.setPosition(0);
+            pixelTrapServoTwo.setPosition(0);
+            pixelTrapIsDown = false;
+        }
+    }
+    
 }
+
+
+/*
+Plane launcher notes:
+line 20, 21, 32, 83-89 commented out for now.
+*/

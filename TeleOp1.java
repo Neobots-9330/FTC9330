@@ -60,7 +60,7 @@ public class TeleOp1 extends LinearOpMode {
 
             robot.move(x * speedMultiplier / maxSpeedMultiplier, y * speedMultiplier / maxSpeedMultiplier, rx * speedMultiplier / maxSpeedMultiplier);
             
-            if(gamepad1.a && !wheeling) {
+            /*if(gamepad1.a && !wheeling) {
                 wheeling = true;
                 
                 new Thread() {
@@ -72,12 +72,19 @@ public class TeleOp1 extends LinearOpMode {
                         wheeling = false;
                     }
                 }.start();
+            }*/
+            
+            //When "y" is pressed on gamepad2, launch the airplane.
+            if (gamepad2.y) {
+                robot.launchAirplane();
             }
             
-            //When "y" is pressed, launch the airplane.
-            if (gamepad1.y) {
-                robot.launchAirplane();
+            //If "b" is pressed on gamepad2, toggle the pixel trap up or down.
+            if (gamepad2.b) {
+                robot.togglePixelTrap();
             }
         }
     }
 }
+
+
