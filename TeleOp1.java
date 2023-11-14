@@ -82,9 +82,8 @@ public class TeleOp1 extends LinearOpMode {
             //If "b" is pressed on gamepad2, toggle the pixel trap up or down.
             if (gamepad2.b) {
                 robot.togglePixelTrap();
+                sleep(250);
             }
         }
     }
 }
-
-

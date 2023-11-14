@@ -21,7 +21,8 @@ public class Robot9330 {
     boolean planeIsLaunched = false; //Switched to true when the plane is launched.
     public Servo pixelTrapServoOne; //First Servo for the pixel trap.
     public Servo pixelTrapServoTwo; //Second Servo for the pixel trap.
-
+    boolean pixelTrapIsDown = false;
+    
     public Robot9330(OpMode opMode, boolean flip) {
         this.opMode = opMode;
         this.flip = flip;
@@ -35,7 +36,7 @@ public class Robot9330 {
         pixelTrapServoOne = opMode.hardwareMap.get(Servo.class, "pixelTrapServoOne");
         pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo");
         
-        airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band.
+        //airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band; Removed, moves the servo to much.
         
         //Set up IMU
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -89,7 +90,7 @@ public class Robot9330 {
     //Rotates a servo, releasing the paper airplane.
     public void launchAirplane() {
         if (planeIsLaunched == false) { //Servo can only be rotated once.
-            airplaneLauncherRelease.setPosition(0.5); //NOTES: 0.64 to hold down band.
+            airplaneLauncherRelease.setPosition(0); //NOTES: 0.64 to hold down band.
             planeIsLaunched = true;
         }
     }
@@ -107,6 +108,57 @@ public class Robot9330 {
         }
     }
     
+    public void autoBB() {
+        
+        move(0, .5, 0, .67);
+        move(0, 0, 0, .5);
+        move(0, -.5, 0, .5);
+        move(0, 0, 0, .5);
+        move(-0.5, 0, 0, 1.2);
+        
+        //auto!!! 
+        //forward - back - left
+    }
+    
+    
+    public void autoBW() {
+        
+        move(0, .5, 0, .67);
+        move(0, 0, 0, .5);
+        move(0, -.5, 0, .59);
+        move(0, 0, 0, .5);
+        move(-0.5, 0, 0, 2.75);
+        
+        //auto!!! 
+        //forward - back - left
+    }
+    
+    
+    
+    public void autoRB() {
+        
+        move(0, .5, 0, .67);
+        move(0, 0, 0, .5);
+        move(0, -.5, 0, .5);
+        move(0, 0, 0, .5);
+        move(0.5, 0, 0, 1.2);
+        
+        //auto!!! 
+        //forward - back - left
+    }
+    
+    
+    public void autoRW() {
+        
+        move(0, .5, 0, .67);
+        move(0, 0, 0, .5);
+        move(0, -.5, 0, .56); //Orignally was .59 sec for time.
+        move(0, 0, 0, .5);
+        move(0.5, 0, 0, 2.75);
+        
+        //auto!!! 
+        //forward - back - left
+    }
 }
 
 
