@@ -6,17 +6,28 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import java.time.Instant;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @TeleOp
 public class TeleOp1 extends LinearOpMode {
     public boolean speedUpPressed = false;
     public boolean speedDownPressed = false;
     public boolean wheeling = false;
-    
+    int cycles; //Stores the number of "opModeIsActive" cycles; Total times the main infinite loop has ran, and completed.
+
     @Override
     public void runOpMode() throws InterruptedException {
         Robot9330 robot = new Robot9330(this, false);
         
+        robot.initAprilTag(); //Iniatlize the aprilTag processor, get the camera up and running.
+
+        //Print message to Driver Hub IOStream, showing that the bot is initalized.
+        telemetry.addLine("Robot inialized, waiting for start...");
+        telemetry.update();
+
         int maxSpeedMultiplier = 3;
         int speedMultiplier = (int) Math.ceil(maxSpeedMultiplier / 2.0);
 
@@ -25,6 +36,9 @@ public class TeleOp1 extends LinearOpMode {
         if(isStopRequested()) return;
 
         while(opModeIsActive()) {
+            
+            telemetry.addLine("Robot is active: True"); //Print message in Driver Hub IOStream, informing the user that the bot is running.
+            
             //change speedMultiplier
             if(gamepad1.right_bumper && speedMultiplier < maxSpeedMultiplier && !speedUpPressed) {
                 speedMultiplier++;
@@ -84,6 +98,21 @@ public class TeleOp1 extends LinearOpMode {
                 robot.togglePixelTrap();
                 sleep(250);
             }
+
+            //Print total number of main loop cycles.
+            cycles++;
+            telemetry.addLine("Total cycles: " + cycles);
+            
+            //Print message of wether a tag is seen or not to the Driver Hub IOStream.
+            if (robot.aprilTagIsSeen() == true) {
+                telemetry.addLine("April Tag Seen: True");
+            } else {
+                telemetry.addLine("April Tag Seen: False");
+            }
+            
+            
+            telemetry.update(); //Update Driver Hub IOStream.
+
         }
     }
 }

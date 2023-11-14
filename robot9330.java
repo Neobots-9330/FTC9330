@@ -22,7 +22,12 @@ public class Robot9330 {
     public Servo pixelTrapServoOne; //First Servo for the pixel trap.
     public Servo pixelTrapServoTwo; //Second Servo for the pixel trap.
     boolean pixelTrapIsDown = false;
-    
+    public static final boolean USE_WEBCAM = true; //Allow AprilTageProcessor to use the webcam, or some shit.
+    AprilTagProcessor aprilTagProcess; //Apriltag proessor to process april tags.
+    VisionPortal visionPortal; //Vision portal to talk to the camera.
+    List<AprilTagDetection> detectedTags; //Holds all detected tags.
+
+
     public Robot9330(OpMode opMode, boolean flip) {
         this.opMode = opMode;
         this.flip = flip;
@@ -158,6 +163,28 @@ public class Robot9330 {
         
         //auto!!! 
         //forward - back - left
+    }
+
+    
+    //Iniatlize the webcamera, get it running with the apriltag processor.
+    public void initAprilTag() {
+        aprilTagProcess = AprilTagProcessor.easyCreateWithDefaults();
+        
+        //Set up the Vision portal to manage vision if the webcamera is set to active.
+        if (USE_WEBCAM) {
+            visionPortal = VisionPortal.easyCreateWithDefaults(opMode.hardwareMap.get(WebcamName.class, "Webcamera main"));
+        }
+    }
+    
+    //Returns true if a AprilTag is seen; Returns false if an AprilTag is not seen.
+    public boolean aprilTagIsSeen() {
+        detectedTags = aprilTagProcess.getDetections();
+        
+        if (detectedTags.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
