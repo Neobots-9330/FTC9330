@@ -32,9 +32,9 @@ public class Robot9330 {
         motorDriveBackLeft = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackLeft");
         motorDriveBackRight = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackRight");
         //servoWheelie = opMode.hardwareMap.get(Servo.class, "servoWheelie");
-        airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "servoDrone");
+        /*airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "servoDrone");
         pixelTrapServoOne = opMode.hardwareMap.get(Servo.class, "pixelTrapServoOne");
-        pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo");
+        pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo");*/
         
         //airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band; Removed, moves the servo to much.
         
@@ -158,6 +158,11 @@ public class Robot9330 {
         
         //auto!!! 
         //forward - back - left
+    }
+    
+    //returns current front left motor position in ticks.
+    public int getFrontLeftMotorPosition() {
+        return motorDriveFrontLeft.getCurrentPosition();
     }
 }
 
