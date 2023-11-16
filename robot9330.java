@@ -63,9 +63,9 @@ public class Robot9330 {
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double frontRightPower = -(rotY - rotX - rx) / denominator; //MOTOR is flipped.
-        double backLeftPower = -(rotY - rotX + rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator; //MOTOR is flipped.
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double backRightPower = -(rotY + rotX - rx) / denominator;
         
         // Move motors
         motorDriveFrontLeft.setPower(frontLeftPower);
