@@ -89,30 +89,29 @@ public class TeleOp1 extends LinearOpMode {
             }*/
             
             //When "y" is pressed on gamepad2, launch the airplane.
-            if (gamepad2.y) {
+            /*if (gamepad2.y) {
                 robot.launchAirplane();
-            }
+            }*/
             
             //If "b" is pressed on gamepad2, toggle the pixel trap up or down.
-            if (gamepad2.b) {
+            /*if (gamepad2.b) {
                 robot.togglePixelTrap();
                 sleep(250);
-            }
+            }*/
 
             //Print total number of main loop cycles.
             cycles++;
             telemetry.addLine("Total cycles: " + cycles);
             
-            //Print message of wether a tag is seen or not to the Driver Hub IOStream.
-            if (robot.aprilTagIsSeen() == true) {
-                telemetry.addLine("April Tag Seen: True");
-            } else {
-                telemetry.addLine("April Tag Seen: False");
+            if(robot.aprilTagIsSeen() == true) {
+                telemetry.addLine("April tag is seen: true");
+            } else if (robot.aprilTagIsSeen() == false) {
+                telemetry.addLine("April tag is seen: false");
             }
             
             
             telemetry.update(); //Update Driver Hub IOStream.
-
+            
         }
     }
 }

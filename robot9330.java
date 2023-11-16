@@ -1,11 +1,16 @@
 package org.neobots2903.ftcCenterstage2023;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.VisionPortal;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import java.util.List;
 
 public class Robot9330 {
     public BNO055IMU imu;
@@ -22,7 +27,7 @@ public class Robot9330 {
     public Servo pixelTrapServoOne; //First Servo for the pixel trap.
     public Servo pixelTrapServoTwo; //Second Servo for the pixel trap.
     boolean pixelTrapIsDown = false;
-    public static final boolean USE_WEBCAM = true; //Allow AprilTageProcessor to use the webcam, or some shit.
+    public final boolean USE_WEBCAM = true; //Allow AprilTageProcessor to use the webcam, or some shit.
     AprilTagProcessor aprilTagProcess; //Apriltag proessor to process april tags.
     VisionPortal visionPortal; //Vision portal to talk to the camera.
     List<AprilTagDetection> detectedTags; //Holds all detected tags.
@@ -37,9 +42,10 @@ public class Robot9330 {
         motorDriveBackLeft = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackLeft");
         motorDriveBackRight = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackRight");
         //servoWheelie = opMode.hardwareMap.get(Servo.class, "servoWheelie");
-        airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "servoDrone");
+        /*airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "servoDrone");
         pixelTrapServoOne = opMode.hardwareMap.get(Servo.class, "pixelTrapServoOne");
         pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo");
+        */
         
         //airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band; Removed, moves the servo to much.
         
@@ -68,9 +74,9 @@ public class Robot9330 {
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double frontRightPower = -(rotY - rotX - rx) / denominator; //MOTOR is flipped.
-        double backLeftPower = -(rotY - rotX + rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator; //MOTOR is flipped.
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double backRightPower = -(rotY + rotX - rx) / denominator;
         
         // Move motors
         motorDriveFrontLeft.setPower(frontLeftPower);
@@ -93,15 +99,15 @@ public class Robot9330 {
     }
     
     //Rotates a servo, releasing the paper airplane.
-    public void launchAirplane() {
+    /*public void launchAirplane() {
         if (planeIsLaunched == false) { //Servo can only be rotated once.
             airplaneLauncherRelease.setPosition(0); //NOTES: 0.64 to hold down band.
             planeIsLaunched = true;
         }
-    }
+    }*/
 
     //Moves the pixel trap up if down, and downif up.
-    public void togglePixelTrap() {
+    /*public void togglePixelTrap() {
         if (pixelTrapIsDown == false) {
             pixelTrapServoOne.setPosition(1);
             pixelTrapServoTwo.setPosition(1);
@@ -111,7 +117,7 @@ public class Robot9330 {
             pixelTrapServoTwo.setPosition(0);
             pixelTrapIsDown = false;
         }
-    }
+    }*/
     
     public void autoBB() {
         
@@ -172,20 +178,23 @@ public class Robot9330 {
         
         //Set up the Vision portal to manage vision if the webcamera is set to active.
         if (USE_WEBCAM) {
-            visionPortal = VisionPortal.easyCreateWithDefaults(opMode.hardwareMap.get(WebcamName.class, "Webcamera main"));
+            visionPortal = VisionPortal.easyCreateWithDefaults(opMode.hardwareMap.get(WebcamName.class, "Webcamera main"), aprilTagProcess);
         }
     }
     
     //Returns true if a AprilTag is seen; Returns false if an AprilTag is not seen.
     public boolean aprilTagIsSeen() {
         detectedTags = aprilTagProcess.getDetections();
-        
+
         if (detectedTags.size() > 0) {
             return true;
         } else {
             return false;
         }
     }
+    
+    
+    
 }
 
 
@@ -193,3 +202,14 @@ public class Robot9330 {
 Plane launcher notes:
 line 20, 21, 32, 83-89 commented out for now.
 */
+
+//Returns true if a AprilTag is seen; Returns false if an AprilTag is not seen.
+    /*public boolean aprilTagIsSeen() {
+        detectedTags = aprilTagProcess.getDetections();
+        
+        if (detectedTags.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }*/
