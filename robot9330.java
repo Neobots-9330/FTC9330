@@ -81,32 +81,45 @@ public class Robot9330 {
         move(0, 0, 0);
     }
     
+    //Tick is what the motor encoders return.
+    //One wheel rotation = 280 ticks = 23.93 centimeters.
+    //Converts cm to ticks.
+    public double toTicks(double cm) {
+        return Math.ceil(cm * 11.7);
+    }
+    
+    //Moves robot forward for a specified number of ticks; power is the motor power.
+    public void moveForward(double ticks, double power) {
+        
+        //Set the number of ticks to move to.
+        motorDriveFrontLeft.setTargetPosition(ticks);
+        motorDriveFrontRight.setTargetPosition(ticks);
+        motorDriveBackLeft.setTargetPosition(ticks);
+        motorDriveBackRight.setTargetPosition(ticks);
+        
+        //Set motor power to move.
+        motorDriveBackRight.setPower(power);
+        motorDriveBackRight.setPower(power);
+        motorDriveBackRight.setPower(power);
+        motorDriveBackRight.setPower(power);
+        
+        //Move forward until the total number of ticks to move is met
+        while (motorDriveBackRight.getTargetPosition() > motorDriveBackRight.getCurrentPosition() + power * 40) {
+            
+        }
+        
+        motorDriveBackRight.setPower(0);
+        motorDriveBackRight.setPower(0);
+        motorDriveBackRight.setPower(0);
+        motorDriveBackRight.setPower(0);
+    }
+    
     public void pause(double seconds) {
         try {
             Thread.sleep((long) (seconds * 1000));
         } catch(InterruptedException exc) {}
     }
     
-    //Rotates a servo, releasing the paper airplane.
-    public void launchAirplane() {
-        if (planeIsLaunched == false) { //Servo can only be rotated once.
-            airplaneLauncherRelease.setPosition(0); //NOTES: 0.64 to hold down band.
-            planeIsLaunched = true;
-        }
-    }
-
-    //Moves the pixel trap up if down, and downif up.
-    public void togglePixelTrap() {
-        if (pixelTrapIsDown == false) {
-            pixelTrapServoOne.setPosition(1);
-            pixelTrapServoTwo.setPosition(1);
-            pixelTrapIsDown = true;
-        } else if (pixelTrapIsDown == true) {
-            pixelTrapServoOne.setPosition(0);
-            pixelTrapServoTwo.setPosition(0);
-            pixelTrapIsDown = false;
-        }
-    }
     
     public void autoBB() {
         
@@ -171,3 +184,16 @@ public class Robot9330 {
 Plane launcher notes:
 line 20, 21, 32, 83-89 commented out for now.
 */
+
+/*280 ticks = one full rotation.*/
+
+//One wheel rotation = 280 ticks = 23.93 centimeters.
+    //Method to test ticks.
+    /*public void tickTest() {
+        
+        motorDriveFrontLeft.setTargetPosition(500);
+        
+        if (motorDriveFrontLeft.getTargetPosition() > motorDriveFrontLeft.getCurrentPosition()) {
+            motorDriveFrontLeft.setPower(0.2);
+        }
+    }*/
