@@ -22,10 +22,6 @@ public class Robot9330 {
     public Servo pixelTrapServoOne; //First Servo for the pixel trap.
     public Servo pixelTrapServoTwo; //Second Servo for the pixel trap.
     boolean pixelTrapIsDown = false;
-    int motorDriveFrontLeft_ticks = 0; //Holds total ticks the motors have currently done, serves to "reset" encoders.
-    int motorDriveFrontRight_ticks = 0;
-    int motorDriveBackLeft_ticks = 0;
-    int motorDriveBackRight_ticks = 0;
     
     
     public Robot9330(OpMode opMode, boolean flip) {
@@ -48,11 +44,16 @@ public class Robot9330 {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
         
+        /*
+        
+        WARNING: LAST YEARS HALF-ASSED CODE, IF MOTORS NEED TO BE REVERSED, REVERSE IT HERE!
+        
+        */
         // Reverse any motors if necessary
         //motorDriveFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorDriveFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorDriveBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorDriveBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        //motorDriveBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         // motorLiftRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     
@@ -71,7 +72,7 @@ public class Robot9330 {
         double frontLeftPower = (rotY + rotX + rx) / denominator;
         double frontRightPower = (rotY - rotX - rx) / denominator; //MOTOR is flipped.
         double backLeftPower = (rotY - rotX + rx) / denominator;
-        double backRightPower = -(rotY + rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
         
         // Move motors
         motorDriveFrontLeft.setPower(frontLeftPower);
@@ -91,43 +92,37 @@ public class Robot9330 {
     //Tick is what the motor encoders return.
     //One wheel rotation = 280 ticks = 23.93 centimeters.
     //Converts inch to ticks.
-    public double toTicks(double inch) {
-        return Math.ceil(inch * 29.71);
+    public int toTicks(double inch) {
+        return (int) Math.ceil(inch * 29.71);
     }
     
-    //Updates the current ticks held by the motor encoder.
-    public void updateTicksMoved() {
-        motorDriveFrontLeft_ticks = motorDriveFrontLeft.getCurrentPosition();
-        motorDriveFrontRight_ticks = motorDriveFrontRight.getCurrentPosition();
-        motorDriveBackLeft_ticks = motorDriveBackLeft.getCurrentPosition();
-        motorDriveBackRight_ticks = motorDriveBackRight.getCurrentPosition();
+    //Fully resets encoders.
+    public void runBackEncoders() {
+        motorDriveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorDriveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorDriveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorDriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     
     //Moves robot forward for a specified number of ticks; power is the motor power.
-    public void moveForward(double ticks, double power) {
+    public void moveForward(int ticks, double power) {
+        runBackEncoders(); //Reset encoders.
         
-        //Set the number of ticks to move to.
-        motorDriveFrontLeft.setTargetPosition((int) ticks); //Cast ticks to int, example: 230.4 is now 230, which is a valid tick.
-        motorDriveFrontRight.setTargetPosition((int) ticks);      //Tick cannot be double.
-        motorDriveBackLeft.setTargetPosition((int) ticks);
-        motorDriveBackRight.setTargetPosition((int) ticks);
+        motorDriveFrontLeft.setTargetPosition(ticks); //Set target position for all motors.
+        motorDriveFrontRight.setTargetPosition(ticks);
+        motorDriveBackLeft.setTargetPosition(ticks);
+        motorDriveBackRight.setTargetPosition(ticks);
         
-        //Set motor power to move.
-        motorDriveBackRight.setPower(-1 * power); //Back right motor is flipped.
-        motorDriveBackLeft.setPower(power);
+        motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
+        motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        //1st argument is ticks per second. (distance traveled)
         motorDriveFrontLeft.setPower(power);
-        motorDriveFrontRight.setPower(power); 
-        
-        //Move forward until the total number of ticks to move is met                              //The "power * 40" compensates for the overdrive. I.E. going past the ticks number.
-        while (motorDriveBackRight.getTargetPosition() > (motorDriveBackRight.getCurrentPosition() - motorDriveBackRight_ticks) + power * 40) {
-            //Do nothing in this cycle.
-        }
-        
-        motorDriveBackRight.setPower(0);
-        motorDriveBackRight.setPower(0);
-        motorDriveBackRight.setPower(0);
-        motorDriveBackRight.setPower(0);
-        
+        motorDriveFrontRight.setPower(power);
+        motorDriveBackLeft.setPower(power);
+        motorDriveBackRight.setPower(power * -1);
     }
     
     public void pause(double seconds) {
@@ -139,11 +134,7 @@ public class Robot9330 {
     
     public void autoBB() {
         
-        move(0, .5, 0, .67);
-        move(0, 0, 0, .5);
-        move(0, -.5, 0, .5);
-        move(0, 0, 0, .5);
-        move(-0.5, 0, 0, 1.2);
+        moveForward(toTicks(12.0), 0.2);
         
         //auto!!! 
         //forward - back - left
@@ -218,3 +209,9 @@ line 20, 21, 32, 83-89 commented out for now.
         motorDriveFrontRight_ticks = motorDriveFrontRight.getTargetPosition();
         motorDriveBackLeft_ticks = motorDriveBackLeft.getTargetPosition();
         motorDriveBackRight_ticks = motorDriveBackRight.getTargetPosition();*/
+        
+        /*move(0, .5, 0, .67);
+        move(0, 0, 0, .5);
+        move(0, -.5, 0, .5);
+        move(0, 0, 0, .5);
+        move(-0.5, 0, 0, 1.2);*/
