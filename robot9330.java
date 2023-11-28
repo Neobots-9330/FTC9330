@@ -22,6 +22,11 @@ public class Robot9330 {
     public Servo pixelTrapServoOne; //First Servo for the pixel trap.
     public Servo pixelTrapServoTwo; //Second Servo for the pixel trap.
     boolean pixelTrapIsDown = false;
+    int motorDriveFrontLeft_ticks = 0; //Holds total ticks the motors have currently done, serves to "reset" encoders.
+    int motorDriveFrontRight_ticks = 0;
+    int motorDriveBackLeft_ticks = 0;
+    int motorDriveBackRight_ticks = 0;
+    
     
     public Robot9330(OpMode opMode, boolean flip) {
         this.opMode = opMode;
@@ -35,6 +40,7 @@ public class Robot9330 {
         /*airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "servoDrone");
         pixelTrapServoOne = opMode.hardwareMap.get(Servo.class, "pixelTrapServoOne");
         pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo");*/
+        
         
         //airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band; Removed, moves the servo to much.
         
@@ -81,37 +87,47 @@ public class Robot9330 {
         move(0, 0, 0);
     }
     
+    
     //Tick is what the motor encoders return.
     //One wheel rotation = 280 ticks = 23.93 centimeters.
-    //Converts cm to ticks.
-    public double toTicks(double cm) {
-        return Math.ceil(cm * 11.7);
+    //Converts inch to ticks.
+    public double toTicks(double inch) {
+        return Math.ceil(inch * 29.71);
+    }
+    
+    //Updates the current ticks held by the motor encoder.
+    public void updateTicksMoved() {
+        motorDriveFrontLeft_ticks = motorDriveFrontLeft.getCurrentPosition();
+        motorDriveFrontRight_ticks = motorDriveFrontRight.getCurrentPosition();
+        motorDriveBackLeft_ticks = motorDriveBackLeft.getCurrentPosition();
+        motorDriveBackRight_ticks = motorDriveBackRight.getCurrentPosition();
     }
     
     //Moves robot forward for a specified number of ticks; power is the motor power.
     public void moveForward(double ticks, double power) {
         
         //Set the number of ticks to move to.
-        motorDriveFrontLeft.setTargetPosition(ticks);
-        motorDriveFrontRight.setTargetPosition(ticks);
-        motorDriveBackLeft.setTargetPosition(ticks);
-        motorDriveBackRight.setTargetPosition(ticks);
+        motorDriveFrontLeft.setTargetPosition((int) ticks); //Cast ticks to int, example: 230.4 is now 230, which is a valid tick.
+        motorDriveFrontRight.setTargetPosition((int) ticks);      //Tick cannot be double.
+        motorDriveBackLeft.setTargetPosition((int) ticks);
+        motorDriveBackRight.setTargetPosition((int) ticks);
         
         //Set motor power to move.
-        motorDriveBackRight.setPower(power);
-        motorDriveBackRight.setPower(power);
-        motorDriveBackRight.setPower(power);
-        motorDriveBackRight.setPower(power);
+        motorDriveBackRight.setPower(-1 * power); //Back right motor is flipped.
+        motorDriveBackLeft.setPower(power);
+        motorDriveFrontLeft.setPower(power);
+        motorDriveFrontRight.setPower(power); 
         
-        //Move forward until the total number of ticks to move is met
-        while (motorDriveBackRight.getTargetPosition() > motorDriveBackRight.getCurrentPosition() + power * 40) {
-            
+        //Move forward until the total number of ticks to move is met                              //The "power * 40" compensates for the overdrive. I.E. going past the ticks number.
+        while (motorDriveBackRight.getTargetPosition() > (motorDriveBackRight.getCurrentPosition() - motorDriveBackRight_ticks) + power * 40) {
+            //Do nothing in this cycle.
         }
         
         motorDriveBackRight.setPower(0);
         motorDriveBackRight.setPower(0);
         motorDriveBackRight.setPower(0);
         motorDriveBackRight.setPower(0);
+        
     }
     
     public void pause(double seconds) {
@@ -197,3 +213,8 @@ line 20, 21, 32, 83-89 commented out for now.
             motorDriveFrontLeft.setPower(0.2);
         }
     }*/
+    
+    /*motorDriveFrontLeft_ticks = motorDriveFrontLeft.getTargetPosition();
+        motorDriveFrontRight_ticks = motorDriveFrontRight.getTargetPosition();
+        motorDriveBackLeft_ticks = motorDriveBackLeft.getTargetPosition();
+        motorDriveBackRight_ticks = motorDriveBackRight.getTargetPosition();*/

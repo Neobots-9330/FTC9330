@@ -23,6 +23,7 @@ public class TeleOp1 extends LinearOpMode {
         waitForStart();
         
         if(isStopRequested()) return;
+        
 
         while(opModeIsActive()) {
             //change speedMultiplier
@@ -39,7 +40,6 @@ public class TeleOp1 extends LinearOpMode {
                 }.start();
             }
             
-            robot.moveForward(robot.toTicks(100.0), 0.2);
             
             if(gamepad1.left_bumper && speedMultiplier > 1 && !speedDownPressed) {
                 speedMultiplier--;
