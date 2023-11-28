@@ -91,9 +91,14 @@ public class Robot9330 {
     
     //Tick is what the motor encoders return.
     //One wheel rotation = 280 ticks = 23.93 centimeters.
-    //Converts inch to ticks.
-    public int toTicks(double inch) {
+    //Converts inch to ticks for driving forward and back.
+    public int toTicks_ForwardAndBack(double inch) {
         return (int) Math.ceil(inch * 29.71);
+    }
+    
+    //Converts inch to ticks for driving left and right (Strafe).
+    public int toTicks_LeftAndRight(double inch) {
+        
     }
     
     //Fully resets encoders.
@@ -105,7 +110,7 @@ public class Robot9330 {
     }
     
     //Moves robot forward for a specified number of ticks; power is the motor power.
-    public void moveForward(int ticks, double power) {
+    public void moveForwardOrReverse(int ticks, double power) {
         runBackEncoders(); //Reset encoders.
         
         motorDriveFrontLeft.setTargetPosition(ticks); //Set target position for all motors.
@@ -125,6 +130,26 @@ public class Robot9330 {
         motorDriveBackRight.setPower(power * -1);
     }
     
+    //One inch = 32 ticks.
+    //Strafe Right: Front left > Forwards; Rear Left > Backwards; Front right > backwards; rear right > forwards.
+    //Strafe Left: Front left > Backwards; Rear left > Forwards; Front Right > Forwards; Rear right > backwards.
+    //Strafe the robot sideways for a number of ticks.
+    //"direction_id"; 0 == left, 1 == right;
+    public void strafe(int ticks, double power, int direction_id) {
+        runBackEncoders();
+        
+        if (direction_id == 0) {
+            
+        }
+        
+        
+        
+        if (direction_id == 1) {
+            
+        }
+        
+    }
+    
     public void pause(double seconds) {
         try {
             Thread.sleep((long) (seconds * 1000));
@@ -134,7 +159,7 @@ public class Robot9330 {
     
     public void autoBB() {
         
-        moveForward(toTicks(12.0), 0.2);
+        moveForwardOrReverse(toTicks_ForwardAndBack(12.0), 0.2);
         
         //auto!!! 
         //forward - back - left
