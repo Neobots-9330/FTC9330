@@ -98,7 +98,7 @@ public class Robot9330 {
     
     //Converts inch to ticks for driving left and right (Strafe).
     public int toTicks_LeftAndRight(double inch) {
-        
+        return (int) Math.ceil(inch * 30);
     }
     
     //Fully resets encoders.
@@ -110,24 +110,44 @@ public class Robot9330 {
     }
     
     //Moves robot forward for a specified number of ticks; power is the motor power.
-    public void moveForwardOrReverse(int ticks, double power) {
+    //Direction id: 0 = forward; 1 = backward;
+    public void moveForwardOrReverse(int ticks, double power, int direction_id) {
         runBackEncoders(); //Reset encoders.
         
-        motorDriveFrontLeft.setTargetPosition(ticks); //Set target position for all motors.
-        motorDriveFrontRight.setTargetPosition(ticks);
-        motorDriveBackLeft.setTargetPosition(ticks);
-        motorDriveBackRight.setTargetPosition(ticks);
+        //Move forward.
+        if (direction_id == 0) {
+            //Set motor target positions to forward.
+            motorDriveFrontLeft.setTargetPosition(ticks); //Set target position for all motors.
+            motorDriveFrontRight.setTargetPosition(ticks);
+            motorDriveBackLeft.setTargetPosition(ticks);
+            motorDriveBackRight.setTargetPosition(ticks);
+        
+            motorDriveFrontLeft.setPower(power);
+            motorDriveFrontRight.setPower(power);
+            motorDriveBackLeft.setPower(power);
+            motorDriveBackRight.setPower(power); //Werid motor.
+        }
+        
+        //Move backward
+        if (direction_id == 1) {
+            //Set target positions to negative (backwards).
+            motorDriveFrontLeft.setTargetPosition(-(ticks)); //Set target position for all motors.
+            motorDriveFrontRight.setTargetPosition(-(ticks));
+            motorDriveBackLeft.setTargetPosition(-(ticks));
+            motorDriveBackRight.setTargetPosition(-(ticks));
+        
+            //Set motor power to reverse.
+            motorDriveFrontLeft.setPower(-power);
+            motorDriveFrontRight.setPower(-power);
+            motorDriveBackLeft.setPower(-power);
+            motorDriveBackRight.setPower(-power); //Werid motor.
+        }
         
         motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
         motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
-        //1st argument is ticks per second. (distance traveled)
-        motorDriveFrontLeft.setPower(power);
-        motorDriveFrontRight.setPower(power);
-        motorDriveBackLeft.setPower(power);
-        motorDriveBackRight.setPower(power * -1);
     }
     
     //One inch = 32 ticks.
@@ -136,16 +156,44 @@ public class Robot9330 {
     //Strafe the robot sideways for a number of ticks.
     //"direction_id"; 0 == left, 1 == right;
     public void strafe(int ticks, double power, int direction_id) {
-        runBackEncoders();
+        runBackEncoders(); //Set encoders to 0.
         
+        //Strafe left
         if (direction_id == 0) {
+            //Set motor target positions for Strafing left.
+            motorDriveFrontLeft.setTargetPosition(-(ticks));
+            motorDriveFrontRight.setTargetPosition(ticks);
+            motorDriveBackLeft.setTargetPosition(ticks);
+            motorDriveBackRight.setTargetPosition(-(ticks)); //Motor is possibly backwards
             
+            motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
+            motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            
+            motorDriveFrontLeft.setPower(-power);
+            motorDriveFrontRight.setPower(power);
+            motorDriveBackLeft.setPower(power);
+            motorDriveBackRight.setPower(-power); //Motor is somehow backwards.
         }
         
-        
-        
+        //Strafe Right
         if (direction_id == 1) {
+            //Set motor target positions for Strafing left.
+            motorDriveFrontLeft.setTargetPosition(ticks);
+            motorDriveFrontRight.setTargetPosition(-(ticks));
+            motorDriveBackLeft.setTargetPosition(-(ticks));
+            motorDriveBackRight.setTargetPosition(ticks); //Motor is possibly backwards
             
+            motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
+            motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            
+            motorDriveFrontLeft.setPower(power);
+            motorDriveFrontRight.setPower(-power);
+            motorDriveBackLeft.setPower(-power);
+            motorDriveBackRight.setPower(power); //Motor is somehow backwards.
         }
         
     }
@@ -159,50 +207,30 @@ public class Robot9330 {
     
     public void autoBB() {
         
-        moveForwardOrReverse(toTicks_ForwardAndBack(12.0), 0.2);
+        //strafe(1500, 0.5, 0);
+        strafe(toTicks_LeftAndRight(6), 0.2, 0);
         
-        //auto!!! 
-        //forward - back - left
+        
     }
     
     
     public void autoBW() {
         
-        move(0, .5, 0, .67);
-        move(0, 0, 0, .5);
-        move(0, -.5, 0, .59);
-        move(0, 0, 0, .5);
-        move(-0.5, 0, 0, 2.75);
-        
-        //auto!!! 
-        //forward - back - left
+        moveForwardOrReverse(1000, 0.1, 1);
     }
     
     
     
     public void autoRB() {
         
-        move(0, .5, 0, .67);
-        move(0, 0, 0, .5);
-        move(0, -.5, 0, .5);
-        move(0, 0, 0, .5);
-        move(0.5, 0, 0, 1.2);
-        
-        //auto!!! 
-        //forward - back - left
+        strafe(1000, 0.2, 0);
     }
     
     
     public void autoRW() {
         
-        move(0, .5, 0, .67);
-        move(0, 0, 0, .5);
-        move(0, -.5, 0, .56); //Orignally was .59 sec for time.
-        move(0, 0, 0, .5);
-        move(0.5, 0, 0, 2.75);
+        strafe(1000, 0.2, 1);
         
-        //auto!!! 
-        //forward - back - left
     }
     
     //returns current front left motor position in ticks.
@@ -235,8 +263,34 @@ line 20, 21, 32, 83-89 commented out for now.
         motorDriveBackLeft_ticks = motorDriveBackLeft.getTargetPosition();
         motorDriveBackRight_ticks = motorDriveBackRight.getTargetPosition();*/
         
+        //BB:
         /*move(0, .5, 0, .67);
         move(0, 0, 0, .5);
         move(0, -.5, 0, .5);
         move(0, 0, 0, .5);
         move(-0.5, 0, 0, 1.2);*/
+        
+        //BW:
+        /*move(0, .5, 0, .67);
+        move(0, 0, 0, .5);
+        move(0, -.5, 0, .59);
+        move(0, 0, 0, .5);
+        move(-0.5, 0, 0, 2.75);*/
+        
+        //RB:
+        /*move(0, .5, 0, .67);
+        move(0, 0, 0, .5);
+        move(0, -.5, 0, .5);
+        move(0, 0, 0, .5);
+        move(0.5, 0, 0, 1.2);*/
+        
+        //RW:
+        /*
+        move(0, .5, 0, .67);
+        move(0, 0, 0, .5);
+        move(0, -.5, 0, .56); //Orignally was .59 sec for time.
+        move(0, 0, 0, .5);
+        move(0.5, 0, 0, 2.75);
+        */
+        //auto!!! 
+        //forward - back - left
