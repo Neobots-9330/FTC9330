@@ -62,8 +62,6 @@ public class TeleOp1 extends LinearOpMode {
 
             robot.move(x * speedMultiplier / maxSpeedMultiplier, y * speedMultiplier / maxSpeedMultiplier, rx * speedMultiplier / maxSpeedMultiplier);
             
-            telemetry.addData("Front left motor position: ", robot.getFrontLeftMotorPosition());
-            
             telemetry.update(); //Update telemetry each loop.
         }
     }

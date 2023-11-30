@@ -23,6 +23,12 @@ public class Robot9330 {
     public Servo pixelTrapServoTwo; //Second Servo for the pixel trap.
     boolean pixelTrapIsDown = false;
     
+    //Auto variables are all in Inches.
+    double autoForward = 32.75; //Distance to move forward toward strip for all autos.
+    double autoBackward = 28.75; //Distance to move backward away from strip for all autos, alligning between rigging to starfe for backdrop park.
+    double autoWing = 98 + 2; //Distance to strafe from the wing to backdrop park.
+    double autoBackdrop = 50.5; //Distance to strafe from the Backdrop start to backdrop park.
+    double autoPower = 0.3;
     
     public Robot9330(OpMode opMode, boolean flip) {
         this.opMode = opMode;
@@ -204,11 +210,23 @@ public class Robot9330 {
         } catch(InterruptedException exc) {}
     }
     
+    //Wait for "motorDriveFrontRight" (Front right motor) to reach its encoder before entering the next atonnymus stage.
+    public void waitForMotorEncoderToFinnish() {
+        while(motorDriveFrontRight.isBusy()) {
+            
+        }
+    }
+    
     
     public void autoBB() {
         
-        //strafe(1500, 0.5, 0);
-        strafe(toTicks_LeftAndRight(6), 0.2, 0);
+                                                    //Distance \ power \ direction.
+        moveForwardOrReverse(toTicks_ForwardAndBack(autoForward), autoPower, 0);
+        waitForMotorEncoderToFinnish();
+        moveForwardOrReverse(toTicks_ForwardAndBack(autoBackward), autoPower, 1);
+        waitForMotorEncoderToFinnish();
+        strafe(toTicks_LeftAndRight(autoBackdrop), autoPower, 0);
+        waitForMotorEncoderToFinnish();
         
         
     }
@@ -216,28 +234,49 @@ public class Robot9330 {
     
     public void autoBW() {
         
-        moveForwardOrReverse(1000, 0.1, 1);
+        moveForwardOrReverse(toTicks_ForwardAndBack(autoForward), autoPower, 0);
+        waitForMotorEncoderToFinnish();
+        moveForwardOrReverse(toTicks_ForwardAndBack(autoBackward), autoPower, 1);
+        waitForMotorEncoderToFinnish();
+        strafe(toTicks_LeftAndRight(autoWing), autoPower, 0);
+        waitForMotorEncoderToFinnish();
     }
     
     
     
     public void autoRB() {
         
-        strafe(1000, 0.2, 0);
+        moveForwardOrReverse(toTicks_ForwardAndBack(autoForward), autoPower, 0);
+        waitForMotorEncoderToFinnish();
+        moveForwardOrReverse(toTicks_ForwardAndBack(autoBackward), autoPower, 1);
+        waitForMotorEncoderToFinnish();
+        strafe(toTicks_LeftAndRight(autoBackdrop), autoPower, 1);
+        waitForMotorEncoderToFinnish();
     }
     
     
     public void autoRW() {
         
-        strafe(1000, 0.2, 1);
+        moveForwardOrReverse(toTicks_ForwardAndBack(autoForward), autoPower, 0);
+        waitForMotorEncoderToFinnish();
+        moveForwardOrReverse(toTicks_ForwardAndBack(autoBackward), autoPower, 1);
+        waitForMotorEncoderToFinnish();
+        strafe(toTicks_LeftAndRight(autoWing), autoPower, 1);
+        waitForMotorEncoderToFinnish();
         
     }
+
+
+}
+/*
+    THE PROGRAMMING GRAVEYARD! GHOSTS OF FORMER SOURCE CODE SPOTTED!
+    BE CAREFUL UPON ENTRY!
+*/
     
     //returns current front left motor position in ticks.
-    public int getFrontLeftMotorPosition() {
-        return motorDriveFrontLeft.getCurrentPosition();
-    }
-}
+    //public int getFrontLeftMotorPosition() {
+    //    return motorDriveFrontLeft.getCurrentPosition();
+    //}
 
 
 /*
