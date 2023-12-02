@@ -12,6 +12,7 @@ public class TeleOp1 extends LinearOpMode {
     public boolean speedUpPressed = false;
     public boolean speedDownPressed = false;
     public boolean wheeling = false;
+    int applicationCycles = 0; //Counts the total number of cycles of the application
     
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,7 +24,10 @@ public class TeleOp1 extends LinearOpMode {
         waitForStart();
         
         if(isStopRequested()) return;
-
+        
+        robot.initHanger(); //Set hanger encoder to 0.
+        robot.initHangerExtender(); //Sets hanger extension positon to 0.
+        
         while(opModeIsActive()) {
             //change speedMultiplier
             if(gamepad1.right_bumper && speedMultiplier < maxSpeedMultiplier && !speedUpPressed) {
@@ -84,6 +88,33 @@ public class TeleOp1 extends LinearOpMode {
                 robot.togglePixelTrap();
                 sleep(250);
             }
+            
+            //If dpad up pressed, raise hanger.
+            if (gamepad2.dpad_up) {
+                robot.raiseHanger();
+            }
+            
+            //If dpad down pressed, lower hanger.
+            if (gamepad2.dpad_down) {
+                robot.lowerHanger();
+            }
+            
+            //If dpad left pressed, extend hanger extender.
+            if (gamepad2.dpad_left) {
+                robot.extendHangerExtender();
+            }
+            
+            //If dpad right pressed, retract hanger extender.
+            if (gamepad2.dpad_right) {
+                robot.retractHangerExtender();
+            }
+            
+            applicationCycles++; //Update total application cycles.
+            telemetry.addData("Total cycles: ", applicationCycles);
+            telemetry.addData("Hanger shoulder position: ", robot.getHangerPosition());
+            telemetry.addData("Hanger extension position: ", robot.getHangerExtensionPosition());
+            
+            telemetry.update(); //Update telemetry.
         }
     }
 }

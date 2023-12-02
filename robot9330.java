@@ -58,11 +58,9 @@ public class Robot9330 {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
         
-        /*
+        //Set brake on hang arm.
+        motorHangArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         
-        WARNING: LAST YEARS HALF-ASSED CODE, IF MOTORS NEED TO BE REVERSED, REVERSE IT HERE!
-        
-        */
         // Reverse any motors if necessary
         //motorDriveFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorDriveFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -70,6 +68,53 @@ public class Robot9330 {
         motorDriveBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         // motorLiftRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
+    
+    //Inailizes the hangers 0 tick position to its current starting position.
+    public void initHanger() {
+        motorHangShoulder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    
+    //Iniatlises the hangers extension. Sets its encoder to 0.
+    public void initHangerExtender() {
+        motorHangArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    
+    public int getHangerExtensionPosition() {
+        return motorHangArm.getCurrentPosition();
+    }
+    
+    //Raises the hanger to its upward position. 164 is upright.
+    public void raiseHanger() {
+        motorHangShoulder.setTargetPosition(164);
+        motorHangShoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorHangShoulder.setPower(0.05);
+    }
+    
+    public void lowerHanger() {
+        motorHangShoulder.setTargetPosition(0);
+        motorHangShoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorHangShoulder.setPower(-0.05);
+    }
+    
+    //Extends hanger extender upward.//360 is default
+    public void extendHangerExtender() {
+        motorHangArm.setTargetPosition(360);
+        motorHangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorHangArm.setPower(0.05);
+    }
+    
+    public void retractHangerExtender() {
+        motorHangArm.setTargetPosition(0);
+        motorHangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorHangArm.setPower(-0.5);
+    }
+    
+    
+    //Returns the hangers position in ticks.
+    public int getHangerPosition() {
+        return motorHangShoulder.getCurrentPosition();
+    }
+    
     
     // Moves robot
     public void move(double x, double y, double rx) {
