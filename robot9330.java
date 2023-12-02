@@ -25,7 +25,7 @@ public class Robot9330 {
     
     //Auto variables are all in Inches.
     double autoForward = 32.75; //Distance to move forward toward strip for all autos.
-    double autoBackward = 28.75; //Distance to move backward away from strip for all autos, alligning between rigging to starfe for backdrop park.
+    double autoBackward = 27.75; //Distance to move backward away from strip for all autos, alligning between rigging to starfe for backdrop park.//Previous 28.75
     double autoWing = 98 + 2; //Distance to strafe from the wing to backdrop park.
     double autoBackdrop = 50.5; //Distance to strafe from the Backdrop start to backdrop park.
     double autoPower = 0.3;
@@ -182,7 +182,7 @@ public class Robot9330 {
             motorDriveBackLeft.setPower(power);
             motorDriveBackRight.setPower(-power); //Motor is somehow backwards.
         }
-        
+    
         //Strafe Right
         if (direction_id == 1) {
             //Set motor target positions for Strafing left.
