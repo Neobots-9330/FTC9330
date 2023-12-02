@@ -106,7 +106,7 @@ public class Robot9330 {
     public void retractHangerExtender() {
         motorHangArm.setTargetPosition(0);
         motorHangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorHangArm.setPower(-0.5);
+        motorHangArm.setPower(-1);
     }
     
     
