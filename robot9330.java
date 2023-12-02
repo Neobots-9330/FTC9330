@@ -96,11 +96,11 @@ public class Robot9330 {
         motorHangShoulder.setPower(-0.05);
     }
     
-    //Extends hanger extender upward.//360 is default
+    //Extends hanger extender upward.//4189 is default
     public void extendHangerExtender() {
-        motorHangArm.setTargetPosition(360);
+        motorHangArm.setTargetPosition(4189);
         motorHangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorHangArm.setPower(0.05);
+        motorHangArm.setPower(0.4);
     }
     
     public void retractHangerExtender() {
@@ -156,11 +156,8 @@ public class Robot9330 {
     //Rotates a servo, releasing the paper airplane.
     public void launchAirplane() {
         if (planeIsLaunched == false) { //Servo can only be rotated once.
-            airplaneLauncherRelease.setPosition(0); //NOTES: 0.64 to hold down band.
-            planeIsLaunched = true;
-            pause(1);
             airplaneLauncherRelease.setPosition(1);
-            planeIsLaunched = false;
+            planeIsLaunched = true;
         }
     }
 
