@@ -171,6 +171,9 @@ public class Robot9330 {
         if (planeIsLaunched == false) { // Servo can only be rotated once.
             airplaneLauncherRelease.setPosition(1);
             planeIsLaunched = true;
+            pause(1);
+            airplaneLauncherRelease.setPosition(1);
+            planeIsLaunched = false;
         }
     }
 
@@ -232,7 +235,6 @@ public class Robot9330 {
                 motorDriveBackLeft.setTargetPosition(-ticks);
                 motorDriveBackLeft.setPower(-power);
             }
-
             if (atonnymus_motorDriveFrontRight_reverse == false) {
                 motorDriveFrontRight.setTargetPosition(ticks);
                 motorDriveFrontRight.setPower(power);
@@ -240,7 +242,6 @@ public class Robot9330 {
                 motorDriveFrontRight.setTargetPosition(-ticks);
                 motorDriveFrontRight.setPower(-power);
             }
-
             if (atonnymus_motorDriveFrontLeft_reverse == false) {
                 motorDriveFrontLeft.setTargetPosition(ticks);
                 motorDriveFrontLeft.setPower(power);
@@ -269,7 +270,6 @@ public class Robot9330 {
                 motorDriveBackLeft.setTargetPosition(ticks);
                 motorDriveBackLeft.setPower(power);
             }
-
             if (atonnymus_motorDriveFrontRight_reverse == false) {
                 motorDriveFrontRight.setTargetPosition(-ticks);
                 motorDriveFrontRight.setPower(-power);
@@ -277,7 +277,6 @@ public class Robot9330 {
                 motorDriveFrontRight.setTargetPosition(ticks);
                 motorDriveFrontRight.setPower(power);
             }
-
             if (atonnymus_motorDriveFrontLeft_reverse == false) {
                 motorDriveFrontLeft.setTargetPosition(-ticks);
                 motorDriveFrontLeft.setPower(-power);
@@ -315,7 +314,6 @@ public class Robot9330 {
                 motorDriveFrontLeft.setTargetPosition(ticks);
                 motorDriveFrontLeft.setPower(power);
             }
-
             if (atonnymus_motorDriveFrontRight_reverse == false) {
                 motorDriveFrontRight.setTargetPosition(ticks);
                 motorDriveFrontRight.setPower(power);
@@ -323,7 +321,6 @@ public class Robot9330 {
                 motorDriveFrontRight.setTargetPosition(-ticks);
                 motorDriveFrontRight.setPower(-power);
             }
-
             if (atonnymus_motorDriveBackLeft_reverse == false) {
                 motorDriveBackLeft.setTargetPosition(ticks);
                 motorDriveBackLeft.setPower(power);
@@ -331,7 +328,6 @@ public class Robot9330 {
                 motorDriveBackLeft.setTargetPosition(-ticks);
                 motorDriveBackLeft.setPower(-power);
             }
-
             if (atonnymus_motorDriveBackRight_reverse == false) {
                 motorDriveBackRight.setTargetPosition(-(ticks));
                 motorDriveBackRight.setPower(-power);
@@ -339,7 +335,6 @@ public class Robot9330 {
                 motorDriveBackRight.setTargetPosition(ticks);
                 motorDriveBackRight.setPower(power);
             }
-
             motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -357,7 +352,6 @@ public class Robot9330 {
                 motorDriveFrontLeft.setTargetPosition(-ticks);
                 motorDriveFrontLeft.setPower(-power);
             }
-
             if (atonnymus_motorDriveFrontRight_reverse == false) {
                 motorDriveFrontRight.setTargetPosition(-ticks);
                 motorDriveFrontRight.setPower(-power);
@@ -365,7 +359,6 @@ public class Robot9330 {
                 motorDriveFrontRight.setTargetPosition(ticks);
                 motorDriveFrontRight.setPower(power);
             }
-
             if (atonnymus_motorDriveBackLeft_reverse == false) {
                 motorDriveBackLeft.setTargetPosition(-ticks);
                 motorDriveBackLeft.setPower(-power);
@@ -373,7 +366,6 @@ public class Robot9330 {
                 motorDriveBackLeft.setTargetPosition(ticks);
                 motorDriveBackLeft.setPower(power);
             }
-
             if (atonnymus_motorDriveBackRight_reverse == false) {
                 motorDriveBackRight.setTargetPosition(ticks);
                 motorDriveBackRight.setPower(power);
@@ -381,7 +373,6 @@ public class Robot9330 {
                 motorDriveBackRight.setTargetPosition(-ticks);
                 motorDriveBackRight.setPower(-power);
             }
-
             motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -407,11 +398,9 @@ public class Robot9330 {
         waitForMotorEncoderToFinnish();
         strafe(toTicks_LeftAndRight(autoBackdrop), autoPower, 0);
         waitForMotorEncoderToFinnish();
-
     }
 
     public void autoBW() {
-
         moveForwardOrReverse(toTicks_ForwardAndBack(autoForward), autoPower, 0);
         waitForMotorEncoderToFinnish();
         moveForwardOrReverse(toTicks_ForwardAndBack(autoBackward), autoPower, 1);
@@ -421,7 +410,6 @@ public class Robot9330 {
     }
 
     public void autoRB() {
-
         moveForwardOrReverse(toTicks_ForwardAndBack(autoForward), autoPower, 0);
         waitForMotorEncoderToFinnish();
         moveForwardOrReverse(toTicks_ForwardAndBack(autoBackward), autoPower, 1);
@@ -431,14 +419,12 @@ public class Robot9330 {
     }
 
     public void autoRW() {
-
         moveForwardOrReverse(toTicks_ForwardAndBack(autoForward), autoPower, 0);
         waitForMotorEncoderToFinnish();
         moveForwardOrReverse(toTicks_ForwardAndBack(autoBackward), autoPower, 1);
         waitForMotorEncoderToFinnish();
         strafe(toTicks_LeftAndRight(autoWing), autoPower, 1);
         waitForMotorEncoderToFinnish();
-
     }
 }
 
