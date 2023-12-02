@@ -31,12 +31,15 @@ public class Robot9330 {
     boolean atonnymus_motorDriveBackLeft_reverse = true;
     boolean atonnymus_motorDriveBackRight_reverse = false;
     
+<<<<<<< HEAD
     //"Magic numbers"
     int hanger_upright_position = 164; //Total ticks to raise the hanger arm to upright position.
     int hanger_extender_position = 4189; //Total ticks to move the hanger actuator upward to grip rigging.
     double ticksToMoveForwardOneInch = 29.71;
     int ticksToStrafOneInch = 30;
     
+=======
+>>>>>>> Develop
     //Auto variables are all in Inches.
     double autoForward = 30.75; //Distance to move forward toward strip for all autos. //Others: 32.75
     double autoBackward = 27.75; //Distance to move backward away from strip for all autos, alligning between rigging to starfe for backdrop park.//Previous 28.75
@@ -91,7 +94,11 @@ public class Robot9330 {
     
     //Raises the hanger to its upward position. 164 is upright.
     public void raiseHanger() {
+<<<<<<< HEAD
         motorHangShoulder.setTargetPosition(hanger_upright_position);
+=======
+        motorHangShoulder.setTargetPosition(164);
+>>>>>>> Develop
         motorHangShoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorHangShoulder.setPower(0.05);
     }
@@ -104,7 +111,11 @@ public class Robot9330 {
     
     //Extends hanger extender upward.//4189 is default
     public void extendHangerExtender() {
+<<<<<<< HEAD
         motorHangArm.setTargetPosition(hanger_extender_position);
+=======
+        motorHangArm.setTargetPosition(4189);
+>>>>>>> Develop
         motorHangArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorHangArm.setPower(0.4);
     }
@@ -184,12 +195,20 @@ public class Robot9330 {
     //One wheel rotation = 280 ticks = 23.93 centimeters.
     //Converts inch to ticks for driving forward and back.
     public int toTicks_ForwardAndBack(double inch) {
+<<<<<<< HEAD
         return (int) Math.ceil(inch * ticksToMoveForwardOneInch);
+=======
+        return (int) Math.ceil(inch * 29.71);
+>>>>>>> Develop
     }
     
     //Converts inch to ticks for driving left and right (Strafe).
     public int toTicks_LeftAndRight(double inch) {
+<<<<<<< HEAD
         return (int) Math.ceil(inch * ticksToStrafOneInch);
+=======
+        return (int) Math.ceil(inch * 30);
+>>>>>>> Develop
     }
     
     //Fully resets encoders.
