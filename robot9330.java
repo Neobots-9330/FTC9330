@@ -34,7 +34,7 @@ public class Robot9330 {
     //"Magic numbers"
     int hanger_upright_position = 164; //Total ticks to raise the hanger arm to upright position.
     int hanger_extender_position = 4189; //Total ticks to move the hanger actuator upward to grip rigging.
-    int ticksToMoveForwardOneInch = 29.71;
+    double ticksToMoveForwardOneInch = 29.71;
     int ticksToStrafOneInch = 30;
     
     //Auto variables are all in Inches.
