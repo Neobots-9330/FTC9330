@@ -22,13 +22,21 @@ public class Robot9330 {
     public Servo pixelTrapServoOne; //First Servo for the pixel trap.
     public Servo pixelTrapServoTwo; //Second Servo for the pixel trap.
     boolean pixelTrapIsDown = false;
+    public DcMotor motorHangShoulder;
+    public DcMotor motorHangArm;
+    
+    //Reverse motors for atonnymus
+    boolean atonnymus_motorDriveFrontLeft_reverse = false;
+    boolean atonnymus_motorDriveFrontRight_reverse = true;
+    boolean atonnymus_motorDriveBackLeft_reverse = true;
+    boolean atonnymus_motorDriveBackRight_reverse = false;
     
     //Auto variables are all in Inches.
-    double autoForward = 32.75; //Distance to move forward toward strip for all autos.
+    double autoForward = 30.75; //Distance to move forward toward strip for all autos. //Others: 32.75
     double autoBackward = 27.75; //Distance to move backward away from strip for all autos, alligning between rigging to starfe for backdrop park.//Previous 28.75
     double autoWing = 98 + 2; //Distance to strafe from the wing to backdrop park.
     double autoBackdrop = 50.5; //Distance to strafe from the Backdrop start to backdrop park.
-    double autoPower = 0.3;
+    double autoPower = 0.2;
     
     public Robot9330(OpMode opMode, boolean flip) {
         this.opMode = opMode;
@@ -39,11 +47,11 @@ public class Robot9330 {
         motorDriveBackLeft = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackLeft");
         motorDriveBackRight = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackRight");
         //servoWheelie = opMode.hardwareMap.get(Servo.class, "servoWheelie");
-        /*airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "servoDrone");
-        pixelTrapServoOne = opMode.hardwareMap.get(Servo.class, "pixelTrapServoOne");
-        pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo");*/
-        
-        
+        airplaneLauncherRelease = opMode.hardwareMap.get(Servo.class, "servoDrone");
+        pixelTrapServoOne = opMode.hardwareMap.get(Servo.class, "pixelTrapServoOne"); //left servo.
+        pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo"); //right servo
+        motorHangShoulder = opMode.hardwareMap.get(DcMotor.class, "motorHangShoulder");
+        motorHangArm = opMode.hardwareMap.get(DcMotor.class, "motorHangArm");
         //airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band; Removed, moves the servo to much.
         
         //Set up IMU
@@ -59,7 +67,7 @@ public class Robot9330 {
         //motorDriveFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorDriveFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorDriveBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        //motorDriveBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorDriveBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         // motorLiftRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     
@@ -76,8 +84,8 @@ public class Robot9330 {
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double frontRightPower = (rotY - rotX - rx) / denominator; //MOTOR is flipped.
-        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = -(rotY - rotX - rx) / denominator; //MOTOR is flipped.
+        double backLeftPower = -(rotY - rotX + rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
         
         // Move motors
@@ -94,6 +102,35 @@ public class Robot9330 {
         move(0, 0, 0);
     }
     
+    public void pause(double seconds) {
+        try {
+            Thread.sleep((long) (seconds * 1000));
+        } catch(InterruptedException exc) {}
+    }
+    
+    //Rotates a servo, releasing the paper airplane.
+    public void launchAirplane() {
+        if (planeIsLaunched == false) { //Servo can only be rotated once.
+            airplaneLauncherRelease.setPosition(0); //NOTES: 0.64 to hold down band.
+            planeIsLaunched = true;
+            pause(1);
+            airplaneLauncherRelease.setPosition(1);
+            planeIsLaunched = false;
+        }
+    }
+
+    //Moves the pixel trap up if down, and downif up.
+    public void togglePixelTrap() {
+        if (pixelTrapIsDown == false) {
+            pixelTrapServoOne.setPosition(1);
+            pixelTrapServoTwo.setPosition(1);
+            pixelTrapIsDown = true;
+        } else if (pixelTrapIsDown == true) {
+            pixelTrapServoOne.setPosition(0);
+            pixelTrapServoTwo.setPosition(0);
+            pixelTrapIsDown = false;
+        }
+    }
     
     //Tick is what the motor encoders return.
     //One wheel rotation = 280 ticks = 23.93 centimeters.
@@ -115,6 +152,7 @@ public class Robot9330 {
         motorDriveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     
+    
     //Moves robot forward for a specified number of ticks; power is the motor power.
     //Direction id: 0 = forward; 1 = backward;
     public void moveForwardOrReverse(int ticks, double power, int direction_id) {
@@ -123,30 +161,75 @@ public class Robot9330 {
         //Move forward.
         if (direction_id == 0) {
             //Set motor target positions to forward.
-            motorDriveFrontLeft.setTargetPosition(ticks); //Set target position for all motors.
-            motorDriveFrontRight.setTargetPosition(ticks);
-            motorDriveBackLeft.setTargetPosition(ticks);
-            motorDriveBackRight.setTargetPosition(ticks);
-        
-            motorDriveFrontLeft.setPower(power);
-            motorDriveFrontRight.setPower(power);
-            motorDriveBackLeft.setPower(power);
-            motorDriveBackRight.setPower(power); //Werid motor.
+            
+            if (atonnymus_motorDriveBackRight_reverse == false) {
+                motorDriveBackRight.setTargetPosition(ticks);
+                motorDriveBackRight.setPower(power); //Werid motor.
+            } else {
+                motorDriveBackRight.setTargetPosition(-ticks);
+                motorDriveBackRight.setPower(-power); //Werid motor.
+            }
+            
+            if (atonnymus_motorDriveBackLeft_reverse == false) {
+                motorDriveBackLeft.setTargetPosition(ticks);
+                motorDriveBackLeft.setPower(power);
+            } else {
+                motorDriveBackLeft.setTargetPosition(-ticks);
+                motorDriveBackLeft.setPower(-power);
+            }
+            
+            if (atonnymus_motorDriveFrontRight_reverse == false) {
+                motorDriveFrontRight.setTargetPosition(ticks);
+                motorDriveFrontRight.setPower(power);
+            } else {
+                motorDriveFrontRight.setTargetPosition(-ticks);
+                motorDriveFrontRight.setPower(-power);
+            }
+            
+            if (atonnymus_motorDriveFrontLeft_reverse == false) {
+                motorDriveFrontLeft.setTargetPosition(ticks);
+                motorDriveFrontLeft.setPower(power);
+            } else {
+                motorDriveFrontLeft.setTargetPosition(-ticks);
+                motorDriveFrontLeft.setPower(-power);
+            }
+            
         }
         
         //Move backward
         if (direction_id == 1) {
-            //Set target positions to negative (backwards).
-            motorDriveFrontLeft.setTargetPosition(-(ticks)); //Set target position for all motors.
-            motorDriveFrontRight.setTargetPosition(-(ticks));
-            motorDriveBackLeft.setTargetPosition(-(ticks));
-            motorDriveBackRight.setTargetPosition(-(ticks));
-        
-            //Set motor power to reverse.
-            motorDriveFrontLeft.setPower(-power);
-            motorDriveFrontRight.setPower(-power);
-            motorDriveBackLeft.setPower(-power);
-            motorDriveBackRight.setPower(-power); //Werid motor.
+            
+            if (atonnymus_motorDriveBackRight_reverse == false) {
+                motorDriveBackRight.setTargetPosition(-ticks);
+                motorDriveBackRight.setPower(-power); //Werid motor.
+            } else {
+                motorDriveBackRight.setTargetPosition(ticks);
+                motorDriveBackRight.setPower(power); //Werid motor.
+            }
+            
+            if (atonnymus_motorDriveBackLeft_reverse == false) {
+                motorDriveBackLeft.setTargetPosition(-ticks);
+                motorDriveBackLeft.setPower(-power);
+            } else {
+                motorDriveBackLeft.setTargetPosition(ticks);
+                motorDriveBackLeft.setPower(power);
+            }
+            
+            if (atonnymus_motorDriveFrontRight_reverse == false) {
+                motorDriveFrontRight.setTargetPosition(-ticks);
+                motorDriveFrontRight.setPower(-power);
+            } else {
+                motorDriveFrontRight.setTargetPosition(ticks);
+                motorDriveFrontRight.setPower(power);
+            }
+            
+            if (atonnymus_motorDriveFrontLeft_reverse == false) {
+                motorDriveFrontLeft.setTargetPosition(-ticks);
+                motorDriveFrontLeft.setPower(-power);
+            } else {
+                motorDriveFrontLeft.setTargetPosition(ticks);
+                motorDriveFrontLeft.setPower(power);
+            }
         }
         
         motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
@@ -155,6 +238,7 @@ public class Robot9330 {
         motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
     }
+    
     
     //One inch = 32 ticks.
     //Strafe Right: Front left > Forwards; Rear Left > Backwards; Front right > backwards; rear right > forwards.
@@ -167,47 +251,87 @@ public class Robot9330 {
         //Strafe left
         if (direction_id == 0) {
             //Set motor target positions for Strafing left.
-            motorDriveFrontLeft.setTargetPosition(-(ticks));
-            motorDriveFrontRight.setTargetPosition(ticks);
-            motorDriveBackLeft.setTargetPosition(ticks);
-            motorDriveBackRight.setTargetPosition(-(ticks)); //Motor is possibly backwards
             
-            motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
+            if (atonnymus_motorDriveFrontLeft_reverse == false) {
+                motorDriveFrontLeft.setTargetPosition(-(ticks));
+                motorDriveFrontLeft.setPower(-power);
+            } else {
+                motorDriveFrontLeft.setTargetPosition(ticks);
+                motorDriveFrontLeft.setPower(power);
+            }
+            
+            if (atonnymus_motorDriveFrontRight_reverse == false) {
+                motorDriveFrontRight.setTargetPosition(ticks);
+                motorDriveFrontRight.setPower(power);
+            } else {
+                motorDriveFrontRight.setTargetPosition(-ticks);
+                motorDriveFrontRight.setPower(-power);
+            }
+            
+            if (atonnymus_motorDriveBackLeft_reverse == false) {
+                motorDriveBackLeft.setTargetPosition(ticks);
+                motorDriveBackLeft.setPower(power);
+            } else {
+                motorDriveBackLeft.setTargetPosition(-ticks);
+                motorDriveBackLeft.setPower(-power);
+            }
+            
+            if (atonnymus_motorDriveBackRight_reverse == false) {
+                motorDriveBackRight.setTargetPosition(-(ticks));
+                motorDriveBackRight.setPower(-power);
+            } else {
+                motorDriveBackRight.setTargetPosition(ticks);
+                motorDriveBackRight.setPower(power);
+            }
+            
+            motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             
-            motorDriveFrontLeft.setPower(-power);
-            motorDriveFrontRight.setPower(power);
-            motorDriveBackLeft.setPower(power);
-            motorDriveBackRight.setPower(-power); //Motor is somehow backwards.
         }
     
         //Strafe Right
         if (direction_id == 1) {
-            //Set motor target positions for Strafing left.
-            motorDriveFrontLeft.setTargetPosition(ticks);
-            motorDriveFrontRight.setTargetPosition(-(ticks));
-            motorDriveBackLeft.setTargetPosition(-(ticks));
-            motorDriveBackRight.setTargetPosition(ticks); //Motor is possibly backwards
             
-            motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
+            if (atonnymus_motorDriveFrontLeft_reverse == false) {
+                motorDriveFrontLeft.setTargetPosition(ticks);
+                motorDriveFrontLeft.setPower(power);
+            } else {
+                motorDriveFrontLeft.setTargetPosition(-ticks);
+                motorDriveFrontLeft.setPower(-power);
+            }
+            
+            if (atonnymus_motorDriveFrontRight_reverse == false) {
+                motorDriveFrontRight.setTargetPosition(-ticks);
+                motorDriveFrontRight.setPower(-power);
+            } else {
+                motorDriveFrontRight.setTargetPosition(ticks);
+                motorDriveFrontRight.setPower(power);
+            }
+            
+            if (atonnymus_motorDriveBackLeft_reverse == false) {
+                motorDriveBackLeft.setTargetPosition(-ticks);
+                motorDriveBackLeft.setPower(-power);
+            } else {
+                motorDriveBackLeft.setTargetPosition(ticks);
+                motorDriveBackLeft.setPower(power);
+            }
+            
+            if (atonnymus_motorDriveBackRight_reverse == false) {
+                motorDriveBackRight.setTargetPosition(ticks);
+                motorDriveBackRight.setPower(power);
+            } else {
+                motorDriveBackRight.setTargetPosition(-ticks);
+                motorDriveBackRight.setPower(-power);
+            }
+            
+            motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            
-            motorDriveFrontLeft.setPower(power);
-            motorDriveFrontRight.setPower(-power);
-            motorDriveBackLeft.setPower(-power);
-            motorDriveBackRight.setPower(power); //Motor is somehow backwards.
         }
         
-    }
-    
-    public void pause(double seconds) {
-        try {
-            Thread.sleep((long) (seconds * 1000));
-        } catch(InterruptedException exc) {}
     }
     
     //Wait for "motorDriveFrontRight" (Front right motor) to reach its encoder before entering the next atonnymus stage.
@@ -216,7 +340,6 @@ public class Robot9330 {
             
         }
     }
-    
     
     public void autoBB() {
         
@@ -265,18 +388,7 @@ public class Robot9330 {
         waitForMotorEncoderToFinnish();
         
     }
-
-
 }
-/*
-    THE PROGRAMMING GRAVEYARD! GHOSTS OF FORMER SOURCE CODE SPOTTED!
-    BE CAREFUL UPON ENTRY!
-*/
-    
-    //returns current front left motor position in ticks.
-    //public int getFrontLeftMotorPosition() {
-    //    return motorDriveFrontLeft.getCurrentPosition();
-    //}
 
 
 /*
@@ -284,52 +396,48 @@ Plane launcher notes:
 line 20, 21, 32, 83-89 commented out for now.
 */
 
-/*280 ticks = one full rotation.*/
 
-//One wheel rotation = 280 ticks = 23.93 centimeters.
-    //Method to test ticks.
-    /*public void tickTest() {
+/*//Set target positions to negative (backwards).
+            motorDriveFrontLeft.setTargetPosition(-(ticks)); //Set target position for all motors.
+            motorDriveFrontRight.setTargetPosition(-(ticks));
+            motorDriveBackLeft.setTargetPosition(-(ticks));
+            motorDriveBackRight.setTargetPosition(-(ticks));
         
-        motorDriveFrontLeft.setTargetPosition(500);
-        
-        if (motorDriveFrontLeft.getTargetPosition() > motorDriveFrontLeft.getCurrentPosition()) {
-            motorDriveFrontLeft.setPower(0.2);
-        }
-    }*/
-    
-    /*motorDriveFrontLeft_ticks = motorDriveFrontLeft.getTargetPosition();
-        motorDriveFrontRight_ticks = motorDriveFrontRight.getTargetPosition();
-        motorDriveBackLeft_ticks = motorDriveBackLeft.getTargetPosition();
-        motorDriveBackRight_ticks = motorDriveBackRight.getTargetPosition();*/
-        
-        //BB:
-        /*move(0, .5, 0, .67);
-        move(0, 0, 0, .5);
-        move(0, -.5, 0, .5);
-        move(0, 0, 0, .5);
-        move(-0.5, 0, 0, 1.2);*/
-        
-        //BW:
-        /*move(0, .5, 0, .67);
-        move(0, 0, 0, .5);
-        move(0, -.5, 0, .59);
-        move(0, 0, 0, .5);
-        move(-0.5, 0, 0, 2.75);*/
-        
-        //RB:
-        /*move(0, .5, 0, .67);
-        move(0, 0, 0, .5);
-        move(0, -.5, 0, .5);
-        move(0, 0, 0, .5);
-        move(0.5, 0, 0, 1.2);*/
-        
-        //RW:
-        /*
-        move(0, .5, 0, .67);
-        move(0, 0, 0, .5);
-        move(0, -.5, 0, .56); //Orignally was .59 sec for time.
-        move(0, 0, 0, .5);
-        move(0.5, 0, 0, 2.75);
-        */
-        //auto!!! 
-        //forward - back - left
+            //Set motor power to reverse.
+            motorDriveFrontLeft.setPower(-power);
+            motorDriveFrontRight.setPower(-power);
+            motorDriveBackLeft.setPower(-power);
+            motorDriveBackRight.setPower(-power); //Werid motor.*/
+
+/*//Set motor target positions for Strafing left.
+            motorDriveFrontLeft.setTargetPosition(-(ticks));
+            motorDriveFrontRight.setTargetPosition(ticks);
+            motorDriveBackLeft.setTargetPosition(ticks);
+            motorDriveBackRight.setTargetPosition(-(ticks)); //Motor is possibly backwards
+            
+            motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
+            motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            
+            motorDriveFrontLeft.setPower(-power);
+            motorDriveFrontRight.setPower(power);
+            motorDriveBackLeft.setPower(power);
+            motorDriveBackRight.setPower(-power); //Motor is somehow backwards.*/
+            
+            
+            /*//Set motor target positions for Strafing left.
+            motorDriveFrontLeft.setTargetPosition(ticks);
+            motorDriveFrontRight.setTargetPosition(-(ticks));
+            motorDriveBackLeft.setTargetPosition(-(ticks));
+            motorDriveBackRight.setTargetPosition(ticks); //Motor is possibly backwards
+            
+            motorDriveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //Drive the motor to the encoder position.
+            motorDriveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorDriveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorDriveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            
+            motorDriveFrontLeft.setPower(power);
+            motorDriveFrontRight.setPower(-power);
+            motorDriveBackLeft.setPower(-power);
+            motorDriveBackRight.setPower(power); //Motor is somehow backwards.*/
