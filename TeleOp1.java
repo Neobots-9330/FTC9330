@@ -114,7 +114,7 @@ public class TeleOp1 extends LinearOpMode {
             telemetry.addData("Hanger shoulder position: ", robot.getHangerPosition());
             telemetry.addData("Hanger extension position: ", robot.getHangerExtensionPosition());
             telemetry.addData("Pixel guard is down: ", robot.pixelTrapIsDown);
-
+            
             telemetry.update(); //Update telemetry.
         }
     }
