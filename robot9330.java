@@ -32,14 +32,14 @@ public class Robot9330 {
     boolean atonnymus_motorDriveBackRight_reverse = false;
     
     //"Magic numbers"
-    int hanger_upright_position = 164; //Total ticks to raise the hanger arm to upright position.
+    int hanger_upright_position = 175; //Total ticks to raise the hanger arm to upright position.
     int hanger_extender_position = 3450; //Total ticks to move the hanger actuator upward to grip rigging.
     double ticksToMoveForwardOneInch = 29.71;
     int ticksToStrafOneInch = 30;
     
     //Auto variables are all in Inches.
     double autoForward = 30.75; //Distance to move forward toward strip for all autos. //Others: 32.75
-    double autoBackward = 27.75; //Distance to move backward away from strip for all autos, alligning between rigging to starfe for backdrop park.//Previous 28.75
+    double autoBackward = 26.75; //Distance to move backward away from strip for all autos, alligning between rigging to starfe for backdrop park.//Previous 28.75
     double autoWing = 98 + 2; //Distance to strafe from the wing to backdrop park.
     double autoBackdrop = 50.5; //Distance to strafe from the Backdrop start to backdrop park.
     double autoPower = 0.2;
@@ -66,7 +66,8 @@ public class Robot9330 {
         
         //Set brake on hang arm.
         motorHangArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        
+        motorHangShoulder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Reverse any motors if necessary
         //motorDriveFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorDriveFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -95,11 +96,6 @@ public class Robot9330 {
         motorHangShoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorHangShoulder.setPower(0.05);
         
-        while (motorHangShoulder.isBusy()) {
-            
-        }
-        
-        motorHangShoulder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     
     public void lowerHanger() {
