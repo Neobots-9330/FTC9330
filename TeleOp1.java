@@ -13,10 +13,15 @@ public class TeleOp1 extends LinearOpMode {
     public boolean speedDownPressed = false;
     public boolean wheeling = false;
     int applicationCycles = 0; // Counts the total number of cycles of the application
-
+    Debounce controllerButton_b;
+    int sleepDebounceTime = 150;
+    
     @Override
     public void runOpMode() throws InterruptedException {
         Robot9330 robot = new Robot9330(this, false);
+        
+        //Class to manage debounce
+        controllerButton_b = new Debounce();
 
         int maxSpeedMultiplier = 3;
         int speedMultiplier = (int) Math.ceil(maxSpeedMultiplier / 2.0);
@@ -88,31 +93,35 @@ public class TeleOp1 extends LinearOpMode {
             if (gamepad2.y) {
                 robot.launchAirplane();
             }
-
+            
             // If "b" is pressed on gamepad2, toggle the pixel trap up or down.
             if (gamepad2.b) {
                 robot.togglePixelTrap();
-                sleep(250);
+                sleep(sleepDebounceTime);
             }
 
             // If dpad up pressed, raise hanger.
             if (gamepad2.dpad_up) {
                 robot.raiseHanger();
+                sleep(sleepDebounceTime);
             }
 
             // If dpad down pressed, lower hanger.
             if (gamepad2.dpad_down) {
                 robot.lowerHanger();
+                sleep(sleepDebounceTime);
             }
 
             // If dpad left pressed, extend hanger extender.
             if (gamepad2.dpad_left) {
                 robot.extendHangerExtender();
+                sleep(sleepDebounceTime);
             }
 
             // If dpad right pressed, retract hanger extender.
             if (gamepad2.dpad_right) {
                 robot.retractHangerExtender();
+                sleep(sleepDebounceTime);
             }
 
             applicationCycles++; // Update total application cycles.
