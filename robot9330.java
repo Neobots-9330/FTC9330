@@ -1,6 +1,7 @@
 package org.neobots2903.ftcCenterstage2023;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Robot9330 {
-    public BNO055IMU imu;
+    public IMU imu;
     public BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     public DcMotor motorDriveFrontLeft; //Front Left motor for wheel base.
     public DcMotor motorDriveFrontRight; //Front Right motor for wheel base.
@@ -24,6 +25,15 @@ public class Robot9330 {
     boolean pixelTrapIsDown = false;
     public DcMotor motorHangShoulder;
     public DcMotor motorHangArm;
+
+    // IMU Starting Position
+    double xRotation = 90;
+    double yRotation = 90;
+    double zRotation = 120;
+
+    // IMU Position helpers
+    Orientation hubRotation;
+    RevHubOrientationOnRobot orientationOnRobot;
     
     //Reverse motors for atonnymus
     boolean atonnymus_motorDriveFrontLeft_reverse = false;
@@ -47,7 +57,7 @@ public class Robot9330 {
     public Robot9330(OpMode opMode, boolean flip) {
         this.opMode = opMode;
         this.flip = flip;
-        imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(IMU.class, "imu");
         motorDriveFrontLeft = opMode.hardwareMap.get(DcMotor.class, "motorDriveFrontLeft");
         motorDriveFrontRight = opMode.hardwareMap.get(DcMotor.class, "motorDriveFrontRight");
         motorDriveBackLeft = opMode.hardwareMap.get(DcMotor.class, "motorDriveBackLeft");
@@ -61,8 +71,9 @@ public class Robot9330 {
         //airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band; Removed, moves the servo to much.
         
         //Set up IMU
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+        hubRotation = xyzOrientation(xRotation, yRotation, zRotation);
+        orientationOnRobot = new RevHubOrientationOnRobot(hubRotation);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
         
         //Set brake on hang arm.
         motorHangArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -132,7 +143,7 @@ public class Robot9330 {
         }
         
         // Magical math
-        double botHeading = -imu.getAngularOrientation().firstAngle;
+        double botHeading = -imu.getAngularOrientation().firstAngle; // TODO: See if this exists
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);

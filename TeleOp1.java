@@ -19,10 +19,7 @@ public class TeleOp1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot9330 robot = new Robot9330(this, false);
-        
-        //Class to manage debounce
-        controllerButton_b = new Debounce();
-
+    
         int maxSpeedMultiplier = 3;
         int speedMultiplier = (int) Math.ceil(maxSpeedMultiplier / 2.0);
 
@@ -63,7 +60,7 @@ public class TeleOp1 extends LinearOpMode {
             }
 
             if (gamepad1.x)
-                robot.imu.initialize(robot.parameters);
+                robot.imu.initialize(new IMU.Parameters(robot.orientationOnRobot));
 
             double x = gamepad1.left_stick_x;
             double y = -gamepad1.left_stick_y;
