@@ -1,6 +1,5 @@
 package org.neobots2903.ftcCenterstage2023;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Robot9330 {
     public IMU imu;
-    public BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     public DcMotor motorDriveFrontLeft; //Front Left motor for wheel base.
     public DcMotor motorDriveFrontRight; //Front Right motor for wheel base.
     public DcMotor motorDriveBackLeft; //Rear Left motor for wheel base.
