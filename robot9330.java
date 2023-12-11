@@ -390,9 +390,10 @@ public class Robot9330 {
     
     //Wait for "motorDriveFrontRight" (Front right motor) to reach its encoder before entering the next atonnymus stage.
     public void waitForMotorEncoderToFinnish() {
-        while(motorDriveFrontRight.isBusy()) {
+        while(motorDriveFrontRight.isBusy() && motorDriveFrontLeft.isBusy() && motorDriveBackRight.isBusy() && motorDriveBackLeft.isBusy()) {
             
         }
+        
     }
     
     public void autoBB() {
