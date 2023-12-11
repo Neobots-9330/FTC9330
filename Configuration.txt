@@ -1,0 +1,7 @@
+Back right motor: motor port 3
+Back left motor: motor port 0
+Front left motor: motor port 1
+Front right motor: motor port 2
+
+Everything else:
+Randomly config to stop hardware map exceptions.
