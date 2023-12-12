@@ -42,7 +42,7 @@ public class Robot9330 {
     double autoBackward = 26.75; //Distance to move backward away from strip for all autos, alligning between rigging to starfe for backdrop park.//Previous 28.75
     double autoWing = 98 + 2; //Distance to strafe from the wing to backdrop park.
     double autoBackdrop = 50.5; //Distance to strafe from the Backdrop start to backdrop park.
-    double autoPower = 0.2;
+    double autoPower = 0.1;
     
     public Robot9330(OpMode opMode, boolean flip) {
         this.opMode = opMode;
@@ -66,6 +66,10 @@ public class Robot9330 {
         
         //Set brake on hang arm.
         motorHangArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorDriveFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorDriveFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorDriveBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorDriveBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         
         // Reverse any motors if necessary
         //motorDriveFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -394,6 +398,12 @@ public class Robot9330 {
             
         }
         
+        //Pause the robot to stop robots motion.
+        try {
+            Thread.sleep(800);
+        } catch (Exception e) {
+            
+        }
     }
     
     public void autoBB() {
