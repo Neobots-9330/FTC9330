@@ -11,6 +11,8 @@ TeleOp/Main class; Entry point.
 public class TeleOpCameraSystem extends LinearOpMode {
     RobotVisionManager vision; //Manages robots vision/camera.
     
+    public static final boolean USE_WEBCAM = true;
+    
     //Main/Entry point.
     public void runOpMode() {
         vision = new RobotVisionManager(this); //Manages robots vision/camera.
@@ -20,7 +22,8 @@ public class TeleOpCameraSystem extends LinearOpMode {
         
         while (opModeIsActive()) {
             
-            vision.printHi();
+            telemetry.addLine("Tfod objects regonized: " + vision.getTotalRegonizedObjects());
+            telemetry.update();
             
         }
     }

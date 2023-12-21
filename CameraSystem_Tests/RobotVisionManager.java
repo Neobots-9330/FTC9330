@@ -29,15 +29,15 @@ public class RobotVisionManager {
     }
     
     //Test
-    public void printHi() {
+    /*public void printHi() {
         opMode.telemetry.addLine("Hello!");
         opMode.telemetry.update();
-    } 
+    }*/
     
     //Returns integer of how many object have been regonized by Tensor Flow.
-    /*public int getTotalRegonizedObjects() {
+    public int getTotalRegonizedObjects() {
         currentRecognitions = tfod_processor.getRecognitions();
         
         return currentRecognitions.size();
-    }*/
+    }
 }
