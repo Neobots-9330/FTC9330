@@ -18,8 +18,15 @@ public class RobotVisionManager {
     
     private TfodProcessor tfod_processor; //Instance "TensorFlow Object Detection" software and processor.
     private VisionPortal cameraVisionPortal;
-    List<Recognition> currentRecognitions; //Store instances of seen objects/regonitions from Tensor Flow; List of instances of class "Regonition", which stores information on the Regonition.
+    List<Recognition> RecognitionizedObjects; //Store instances of seen objects/regonitions from Tensor Flow; List of instances of class "Regonition", which stores information on the Regonition.
     OpMode opMode; //Instance of opMode, inialized when opMode is passed from teleop to RobotVisionManager.
+    private TeamProp cubeProp; //Class stores data for tensorflow detection of our team prop.
+    float teamPropconfidence = 0; //Confidence of tensor flow detection. 
+    float teamPropLeft = 0; //Returns the left coordinate of the rectangle bounding the detected object.
+    float teamPropRight = 0; //Returns the right coordinate of the rectangle bounding the detected object.
+    float teamPropTop = 0; //Returns the top coordinate of the rectangle bounding the detected object.
+    float teamPropBottom = 0; //Returns the bottom coordinate of the rectangle bounding the detected object.
+    String teamPropLabel = ""; //Name of tensor flow object detected.
     
     //Constructor.
     public RobotVisionManager(OpMode opMode) {
@@ -34,10 +41,20 @@ public class RobotVisionManager {
         opMode.telemetry.update();
     }*/
     
-    //Returns integer of how many object have been regonized by Tensor Flow.
-    public int getTotalRegonizedObjects() {
-        currentRecognitions = tfod_processor.getRecognitions();
+    //Returns the current regonitions detected.
+    public void detectTeamProp() {
         
-        return currentRecognitions.size();
+        RecognitionizedObjects = tfod_processor.getRecognitions(); //Array of regonized objects
+        
+        //Loop throught the regonized objects
+        for (Recognition object : RecognitionizedObjects) {
+            teamPropconfidence = object.getConfidence();
+            teamPropLeft = object.getLeft();
+            teamPropRight = object.getRight();
+            teamPropBottom = object.getBottom();
+            teamPropTop = object.getTop();
+            teamPropLabel = object.getLabel();
+        }
+        
     }
 }

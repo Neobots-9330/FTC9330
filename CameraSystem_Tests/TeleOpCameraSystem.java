@@ -16,15 +16,18 @@ public class TeleOpCameraSystem extends LinearOpMode {
     //Main/Entry point.
     public void runOpMode() {
         vision = new RobotVisionManager(this); //Manages robots vision/camera.
-        
+        int applicationCycles = 0; //Total cycles of the application.
         
         waitForStart();
         
         while (opModeIsActive()) {
             
-            telemetry.addLine("Tfod objects regonized: " + vision.getTotalRegonizedObjects());
-            telemetry.update();
+            vision.detectTeamProp();
+            telemetry.addLine("Left: " + Float.toString(vision.teamPropLeft));
             
+            applicationCycles++;
+            telemetry.addLine("Total cycles: " + applicationCycles);
+            telemetry.update(); //Update telemetry after each application cycle.
         }
     }
 }
