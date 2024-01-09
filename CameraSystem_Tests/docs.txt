@@ -1,1 +1,0 @@
-https://first-tech-challenge.github.io/SkyStone/org/firstinspires/ftc/robotcore/external/tfod/Recognition.html
