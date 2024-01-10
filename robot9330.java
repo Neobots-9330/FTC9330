@@ -421,11 +421,11 @@ public class Robot9330 {
     }
     
     public void autoTEST() {
-        initTfod();
-        detect();
+        //initTfod();
+        //detect();
         
         for (Recognition Recognitions : currentRecognitions) {
-            opMode.telemetry.addLine("Print you cunt");
+            opMode.telemetry.addLine("You found a secret! Dark Suckers!");
         }
         
         opMode.telemetry.update();
