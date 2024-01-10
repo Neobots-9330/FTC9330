@@ -1,1 +1,0 @@
-Source folder to where Tfod models originate/were generated from.
