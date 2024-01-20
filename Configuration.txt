@@ -1,7 +1,19 @@
-Back right motor: motor port 3
-Back left motor: motor port 0
-Front left motor: motor port 1
-Front right motor: motor port 2
+Front left motor: Control hub motor port 0
 
-Everything else:
-Randomly config to stop hardware map exceptions.
+Front right motor: expansion hub motor port 0
+
+Back right motor: Expansion hub motor port 1
+
+Back left motor: Control hub motor port 1
+
+Front left servo: Control hub servo port 0
+
+Front right servo: Expansion hub servo port 0
+
+
+servoDrone: Expansion hub servo port 1
+
+
+HangArm motor: Control hub motor port 2
+
+HangShould: Control hub motor port 3

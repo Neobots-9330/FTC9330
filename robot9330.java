@@ -1,11 +1,20 @@
 package org.neobots2903.ftcCenterstage2023;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.firstinspires.ftc.vision.VisionPortal;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import java.util.List;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import java.util.ArrayList;
 
 public class Robot9330 {
     public BNO055IMU imu;
@@ -24,6 +33,11 @@ public class Robot9330 {
     boolean pixelTrapIsDown = false;
     public DcMotor motorHangShoulder;
     public DcMotor motorHangArm;
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+    private TfodProcessor tfod;
+    private VisionPortal visionPortal;
+    //public List<Recognition> currentRecognitions;
+    public List<Recognition> currentRecognitions;
     
     //Reverse motors for atonnymus
     boolean atonnymus_motorDriveFrontLeft_reverse = false;
@@ -58,7 +72,7 @@ public class Robot9330 {
         pixelTrapServoTwo = opMode.hardwareMap.get(Servo.class, "pixelTrapServoTwo"); //right servo
         motorHangShoulder = opMode.hardwareMap.get(DcMotor.class, "motorHangShoulder");
         motorHangArm = opMode.hardwareMap.get(DcMotor.class, "motorHangArm");
-        //airplaneLauncherRelease.setPosition(0.64); //Lock in the rubber band; Removed, moves the servo to much.
+        //currentRecognitions = new ArrayList<Recognition>();
         
         //Set up IMU
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -393,6 +407,28 @@ public class Robot9330 {
         while(motorDriveFrontRight.isBusy()) {
             
         }
+    }
+    
+    //Inialize the tfod.
+    public void initTfod() {
+        tfod = TfodProcessor.easyCreateWithDefaults(); //Setup tfod processor with default settings.
+        visionPortal = VisionPortal.easyCreateWithDefaults(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
+    }
+    
+    //Scan onboard cameras, store detections in list.
+    public void detect() {
+        currentRecognitions = tfod.getRecognitions();
+    }
+    
+    public void autoTEST() {
+        //initTfod();
+        //detect();
+        
+        for (Recognition Recognitions : currentRecognitions) {
+            opMode.telemetry.addLine("You found a secret! Dark Suckers!");
+        }
+        
+        opMode.telemetry.update();
     }
     
     public void autoBB() {

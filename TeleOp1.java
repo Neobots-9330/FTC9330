@@ -13,15 +13,11 @@ public class TeleOp1 extends LinearOpMode {
     public boolean speedDownPressed = false;
     public boolean wheeling = false;
     int applicationCycles = 0; // Counts the total number of cycles of the application
-    Debounce controllerButton_b;
     int sleepDebounceTime = 150;
     
     @Override
     public void runOpMode() throws InterruptedException {
         Robot9330 robot = new Robot9330(this, false);
-        
-        //Class to manage debounce
-        controllerButton_b = new Debounce();
 
         int maxSpeedMultiplier = 3;
         int speedMultiplier = (int) Math.ceil(maxSpeedMultiplier / 2.0);
